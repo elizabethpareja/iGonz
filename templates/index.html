@@ -42,7 +42,15 @@
    <li class="nav-item">
     <a class="nav-link" id="Albumes-tab" data-toggle="pill" href="#Albumes" role="tab" aria-controls="Albumes" aria-selected="false">Albumes</a>
   </li>
+   <li class="nav-item">
+    <a class="nav-link" id="Agregar-tab" data-toggle="pill" href="#Agregar" role="tab" aria-controls="Agregar" aria-selected="false">Agregar</a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" id="Crear_Cancion-tab" data-toggle="pill" href="#Crear_Cancion" role="tab" aria-controls="Crear_Cancion" aria-selected="false">Crear Cancion</a>
+  </li>
 </ul>
+<form method="POST">
 <div class="tab-content" id="pills-tabContent">
   <div class="tab-pane fade show active" id="Canciones" role="tabpanel" aria-labelledby="Canciones-tab">
     {% for i in canciones %}
@@ -88,5 +96,92 @@
     {% endfor %}
 
   </div>
-</div>
 
+  <div class="tab-pane fade" id="Agregar" role="tabpanel" aria-labelledby="Agregar-tab">
+
+    <b><p> 1. Para agregar una canción primero revise en el boton "canciones" si su cancion no existe</p>
+
+    <p>2. Luego de verificar si existe o no revise si el o los autores, albumes o generos correspondientes a la cancion que quiere agregar existen.</p>
+
+    <p>3. si no existe el o los autores, albumes o generos que necesita agreguelo a continuación.</p>
+
+    <p>4. luego de agregarlo recargue la pagina y vaya al boton "crear cancion" y cree su canción.</p></b>
+
+    <p style="color: black">pd: Agregue un autor, album o genero a la vez. </p>
+
+  
+    <p style="color: black">Si algun AUTOR, GENERO o ALBUM que necesita aun no existe agreguelo aqui:</p>
+    
+      <div> Autor: 
+        <input name="Autor_nuevo" value="">
+      </div>
+      <div> Genero: 
+        <input name="Genero_nuevo" value="">
+      </div>     
+      <div> Album: 
+        <input name="Album_nuevo" value="">
+      </div>
+      <div> Año del album (no se agregara el album si no pone fecha): 
+        <input name="Ano_nuevo" value="">
+      </div>
+      <div>
+        <button value="enviar" type="submit"> enviar </button>
+      </div>
+
+  
+  </div>
+
+  <div class="tab-pane fade" id="Crear_Cancion" role="tabpanel" aria-labelledby="Crear_Cancion-tab">
+
+    <b style="color: black"><p>Antes de crear una cancion visite el boton "Agregar" y siga las instrucciones.</p></b>
+
+    <p style="color: black"> Agregue el nombre de su canción: (si no agrega los segundos no se agregará la canción) </p>
+
+      Nombre de la canción: <input name="Cancion_nueva" value="">
+      Duración en segundos de la canción: <input name="Cancion_seg_nueva" value="">
+      
+    
+
+    <p></p>
+    <div class="container">
+    <p style="color: black">
+    Seleccione los AUTORES de la canción: 
+    </p>
+    <p>
+    {% for i in autores %}
+      <input style="color: black" type="checkbox" name="AUTORES" value="{{i[0]}}">
+      <label style="color: black" >{{i[1]}}</label>
+    {% endfor %}
+    </p>
+
+    <p style="color: black">
+    Seleccione los GENEROS de la canción: 
+    </p>
+    <p style="color: black">
+    {% for i in generos %}
+      <input style="color: black" type="checkbox" name="GENEROS" value="{{i[0]}}">
+      <label style="color: black" >{{i[1]}}</label>
+    {% endfor %}
+    </p>
+
+    <p style="color: black">
+    Seleccione los ALBUMES de la canción: 
+    </p>
+    <p>
+    {% for i in albumes %}
+      <input style="color: black" type="checkbox" name="ALBUMES" value="{{i[0]}}">
+      <label style="color: black" >{{i[1]}}</label>
+    {% endfor %}
+    </p>
+  </div>
+    <div>
+      <button value="enviar" type="submit"> enviar </button>
+    </div>
+
+  </div>
+
+
+</div>
+</form>
+</body>
+</html>

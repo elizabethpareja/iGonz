@@ -8,8 +8,8 @@ import psycopg2
 conn = psycopg2.connect("host=%s dbname=%s user=%s password=%s port=%s"%(host,database,user,passwd,port))
 cur = conn.cursor()
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=["GET", "POST"])
+@app.route('/index', methods=["GET", "POST"])
 
 def index():	
 	sql = "select * from canciones"
@@ -28,6 +28,50 @@ def index():
 	cur.execute(sql)
 	albumes = cur.fetchall()
 
+	if request.method == "POST":
+		cancion_nueva = request.form["Cancion_nueva"]
+		cancion_seg_nueva = request.form["Cancion_seg_nueva"]
+		autor_nuevo = request.form["Autor_nuevo"]
+		genero_nuevo = request.form["Genero_nuevo"]
+		album_nuevo = request.form["Album_nuevo"]
+		ano_nuevo = request.form["Ano_nuevo"]
+		Autores_Cancion_nueva = request.form.getlist("AUTORES")
+		Generos_Cancion_nueva = request.form.getlist("GENEROS")
+		Albumes_Cancion_nueva = request.form.getlist("ALBUMES")
+		sql = "select max(id) from canciones"
+		cur.execute(sql)
+		id_cancion = cur.fetchall()
+		id_cancion = str(int(id_cancion[0][0]) + 1)
+
+		if album_nuevo!= "" and ano_nuevo!= "":
+			sql = "insert into Albumes (nombre,ano) values ('%s','%s') returning id" %(album_nuevo,ano_nuevo)
+			cur.execute(sql)
+		
+
+		if  autor_nuevo!="":
+			sql = "insert into Autores (nombre) values ('%s') returning id" %(autor_nuevo)
+			cur.execute(sql)
+
+		if  genero_nuevo!="":
+			sql = "insert into Generos (nombre) values ('%s') returning id" %(genero_nuevo)
+			cur.execute(sql)
+
+		if  cancion_nueva!="" and cancion_seg_nueva!= "" and Autores_Cancion_nueva!= None and Generos_Cancion_nueva!= None and Albumes_Cancion_nueva!= None:
+			sql = "insert into Canciones (nombre, duracion) values ('%s','%s') returning id" %(cancion_nueva, str(cancion_seg_nueva))
+			cur.execute(sql)
+			for i in Autores_Cancion_nueva:
+				sql = "insert into Canciones_Autores (cancion_id, autor_id) values ('%s','%s') " %(id_cancion, i[0])
+				cur.execute(sql)
+			for i in Generos_Cancion_nueva:
+				sql = "insert into Canciones_Generos (cancion_id, genero_id) values ('%s','%s') " %(id_cancion, i[0])
+				cur.execute(sql)
+			for i in Albumes_Cancion_nueva:
+				sql = "insert into Canciones_Albumes (cancion_id, album_id) values ('%s','%s') " %(id_cancion, i[0])
+				cur.execute(sql)
+
+		conn.commit()
+		return success()
+	
 	return render_template("index.html",canciones = canciones, autores = autores, generos = generos, albumes = albumes)
 
 @app.route('/cancion/<int:id>')	
@@ -138,5 +182,9 @@ def album(id):
 	
 
 	return render_template('album.html',album=album,genero=genero,cancion=cancion, autor=autor)
+
+@app.route('/success')
+def success():
+	return render_template("success.html")
 
 app.run(port=80)
