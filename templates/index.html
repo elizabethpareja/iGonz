@@ -49,6 +49,7 @@
   <li class="nav-item">
     <a class="nav-link" id="Crear_Cancion-tab" data-toggle="pill" href="#Crear_Cancion" role="tab" aria-controls="Crear_Cancion" aria-selected="false">Crear Cancion</a>
   </li>
+  
 </ul>
 <form method="POST">
 <div class="tab-content" id="pills-tabContent">
@@ -150,7 +151,7 @@
     <p>
     {% for i in autores %}
       <input style="color: black" type="checkbox" name="AUTORES" value="{{i[0]}}">
-      <label style="color: black" >{{i[1]}}</label>
+      <label style="color: black" for="{{i[0]}}" >{{i[1]}}</label>
     {% endfor %}
     </p>
 
@@ -160,7 +161,7 @@
     <p style="color: black">
     {% for i in generos %}
       <input style="color: black" type="checkbox" name="GENEROS" value="{{i[0]}}">
-      <label style="color: black" >{{i[1]}}</label>
+      <label style="color: black" for="{{i[0]}}" >{{i[1]}}</label>
     {% endfor %}
     </p>
 
@@ -170,13 +171,14 @@
     <p>
     {% for i in albumes %}
       <input style="color: black" type="checkbox" name="ALBUMES" value="{{i[0]}}">
-      <label style="color: black" >{{i[1]}}</label>
+      <label style="color: black" for="{{i[0]}}" >{{i[1]}}</label>
     {% endfor %}
     </p>
   </div>
     <div>
       <button value="enviar" type="submit"> enviar </button>
     </div>
+
 
   </div>
 

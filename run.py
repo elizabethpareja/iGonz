@@ -28,6 +28,8 @@ def index():
 	cur.execute(sql)
 	albumes = cur.fetchall()
 
+	error1 = None
+
 	if request.method == "POST":
 		cancion_nueva = request.form["Cancion_nueva"]
 		cancion_seg_nueva = request.form["Cancion_seg_nueva"]
@@ -38,15 +40,15 @@ def index():
 		Autores_Cancion_nueva = request.form.getlist("AUTORES")
 		Generos_Cancion_nueva = request.form.getlist("GENEROS")
 		Albumes_Cancion_nueva = request.form.getlist("ALBUMES")
-		sql = "select max(id) from canciones"
-		cur.execute(sql)
-		id_cancion = cur.fetchall()
-		id_cancion = str(int(id_cancion[0][0]) + 1)
+		print(Autores_Cancion_nueva, Generos_Cancion_nueva, Albumes_Cancion_nueva)
 
-		if album_nuevo!= "" and ano_nuevo!= "":
-			sql = "insert into Albumes (nombre,ano) values ('%s','%s') returning id" %(album_nuevo,ano_nuevo)
-			cur.execute(sql)
-		
+		if album_nuevo != "" or ano_nuevo != "":
+			if album_nuevo!= "" and ano_nuevo!= "":
+				sql = "insert into Albumes (nombre,ano) values ('%s','%s') returning id" %(album_nuevo,ano_nuevo)
+				cur.execute(sql)
+			else:
+				error1 = "Rellene los campos necesarios."
+				return error()
 
 		if  autor_nuevo!="":
 			sql = "insert into Autores (nombre) values ('%s') returning id" %(autor_nuevo)
@@ -56,25 +58,32 @@ def index():
 			sql = "insert into Generos (nombre) values ('%s') returning id" %(genero_nuevo)
 			cur.execute(sql)
 
-		if  cancion_nueva!="" and cancion_seg_nueva!= "" and Autores_Cancion_nueva!= None and Generos_Cancion_nueva!= None and Albumes_Cancion_nueva!= None:
-			sql = "insert into Canciones (nombre, duracion) values ('%s','%s') returning id" %(cancion_nueva, str(cancion_seg_nueva))
-			cur.execute(sql)
-			for i in Autores_Cancion_nueva:
-				sql = "insert into Canciones_Autores (cancion_id, autor_id) values ('%s','%s') " %(id_cancion, i[0])
+		if cancion_nueva!="" or cancion_seg_nueva!= "" or Autores_Cancion_nueva or Generos_Cancion_nueva or Albumes_Cancion_nueva:
+			if  cancion_nueva!="" and cancion_seg_nueva!= "" and Autores_Cancion_nueva and Generos_Cancion_nueva and Albumes_Cancion_nueva:
+				sql = "insert into Canciones (nombre, duracion) values ('%s','%s') returning id" %(cancion_nueva, str(cancion_seg_nueva))
 				cur.execute(sql)
-			for i in Generos_Cancion_nueva:
-				sql = "insert into Canciones_Generos (cancion_id, genero_id) values ('%s','%s') " %(id_cancion, i[0])
-				cur.execute(sql)
-			for i in Albumes_Cancion_nueva:
-				sql = "insert into Canciones_Albumes (cancion_id, album_id) values ('%s','%s') " %(id_cancion, i[0])
-				cur.execute(sql)
+				id_cancion = cur.fetchall()
+
+				for i in Autores_Cancion_nueva:
+					sql = "insert into Canciones_Autores (cancion_id, autor_id) values ('%s','%s') " %(id_cancion[0][0], i)
+					cur.execute(sql)
+				for i in Generos_Cancion_nueva:
+					sql = "insert into Canciones_Generos (cancion_id, genero_id) values ('%s','%s') " %(id_cancion[0][0], i)
+					cur.execute(sql)
+				for i in Albumes_Cancion_nueva:
+					sql = "insert into Canciones_Albumes (cancion_id, album_id) values ('%s','%s') " %(id_cancion[0][0], i)
+					cur.execute(sql)
+			else:
+				error1='Rellene los campos necesarios.'
+				return error()
+
 
 		conn.commit()
-		return success()
-	
-	return render_template("index.html",canciones = canciones, autores = autores, generos = generos, albumes = albumes)
+		succ = "Se ha agregado satisfactoriamente."
+		return success(succ)
+	return render_template("index.html",canciones = canciones, autores = autores, generos = generos, albumes = albumes, error1 = error1)
 
-@app.route('/cancion/<int:id>')	
+@app.route('/cancion/<int:id>', methods=["GET", "POST"])	
 def cancion(id):
 	sql = "select * from Canciones where id = " + str(id)
 	cur.execute(sql)
@@ -106,6 +115,19 @@ def cancion(id):
 		sql = "select * from Albumes where id = " + str(i[0]) 
 		cur.execute(sql)
 		album.append(cur.fetchall())
+	#if Borrar Canción:
+	if request.method == "POST":
+		sql = "delete from canciones where id = " + str(id)
+		cur.execute(sql)
+		sql = "delete from Canciones_Autores where Cancion_id = " + str(id)
+		cur.execute(sql)
+		sql = "delete from Canciones_Albumes where Cancion_id = " + str(id)
+		cur.execute(sql)
+		sql = "delete from Canciones_Generos where Cancion_id = " + str(id)
+		cur.execute(sql)
+		conn.commit()
+		succ = "Cancion eliminada exitosamente."
+		return success(succ)
 
 	return render_template('cancion.html',autor=autor,cancion=cancion, genero=genero, album=album)
 
@@ -184,7 +206,11 @@ def album(id):
 	return render_template('album.html',album=album,genero=genero,cancion=cancion, autor=autor)
 
 @app.route('/success')
-def success():
-	return render_template("success.html")
+def success(succ):
+	return render_template("success.html", succ = succ)
+
+@app.route('/error')
+def error():
+	return render_template("error.html")
 
 app.run(port=80)

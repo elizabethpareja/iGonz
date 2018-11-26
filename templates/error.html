@@ -31,50 +31,11 @@
 
 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
   <li class="nav-item">
-    <a class="nav-link" href="/">Volver</a>
+    <a class="nav-link" href="{{ url_for('index') }}">Volver</a>
   </li>
 </ul>
 
-<div>
-  <a> <b> {{ cancion[0][1] }}  </b> </a> 
-
-  <p> </p>
-
-  <p style="color:black"> <a> Duración: - {{cancion[0][2] }}seg  </a> </p>
-
-  <p style="color:black">Autores:
-  {% for i in autor %}
-  {% for k in i %}
-  <a href="/autor/{{ k[0] }}">  - {{ k[1] }} </a>
-  {% endfor %}
-  {% endfor %}
-	</p>
-
-<p style="color:black">
-	Generos:
- {% for i in genero %}
-  {% for k in i %}
-  <a href="/genero/{{ k[0] }}">  - {{ k[1] }} </a>
-  {% endfor %}
-  {% endfor %}
-</p>
-
-<p style="color:black">
-	Albumes:
- {% for i in album %}
-  {% for k in i %}
-  <a href="/album/{{ k[0] }}">  - {{ k[1] }} </a>
-  {% endfor %}
-  {% endfor %}
-</p>
-
-<form method="POST">
-<div>
-  <button value="Borrar" type="submit"> Borrar Canción</button>
-</div>
-</form>
-
-</div>
+<a style="color: red"> Rellene los campos necesarios. </a>
 
 </body>
 </html>
