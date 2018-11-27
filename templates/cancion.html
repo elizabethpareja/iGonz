@@ -68,6 +68,8 @@
   {% endfor %}
 </p>
 
+<a class="nav-link" href="{{ url_for('editar', id_cancion = cancion [0][0]) }}">Editar</a>
+
 <form method="POST">
 <div>
   <button value="Borrar" type="submit"> Borrar Canción</button>
