@@ -43,6 +43,11 @@ def index():
 		print(Autores_Cancion_nueva, Generos_Cancion_nueva, Albumes_Cancion_nueva)
 
 		if album_nuevo != "" or ano_nuevo != "":
+			try:
+				int(ano_nuevo)
+			except ValueError:
+				error1='Rellene los campos necesarios y correctamente.'
+				return error()
 			if album_nuevo!= "" and ano_nuevo!= "":
 				sql = "insert into Albumes (nombre,ano) values ('%s','%s') returning id" %(album_nuevo,ano_nuevo)
 				cur.execute(sql)
@@ -58,7 +63,14 @@ def index():
 			sql = "insert into Generos (nombre) values ('%s') returning id" %(genero_nuevo)
 			cur.execute(sql)
 
+
 		if cancion_nueva!="" or cancion_seg_nueva!= "" or Autores_Cancion_nueva or Generos_Cancion_nueva or Albumes_Cancion_nueva:
+			try:
+				int(cancion_seg_nueva)
+			except ValueError:
+				error1='Rellene los campos necesarios y correctamente.'
+				return error()
+
 			if  cancion_nueva!="" and cancion_seg_nueva!= "" and Autores_Cancion_nueva and Generos_Cancion_nueva and Albumes_Cancion_nueva:
 				sql = "insert into Canciones (nombre, duracion) values ('%s','%s') returning id" %(cancion_nueva, str(cancion_seg_nueva))
 				cur.execute(sql)
@@ -74,7 +86,7 @@ def index():
 					sql = "insert into Canciones_Albumes (cancion_id, album_id) values ('%s','%s') " %(id_cancion[0][0], i)
 					cur.execute(sql)
 			else:
-				error1='Rellene los campos necesarios.'
+				error1='Rellene los campos necesarios y correctamente.'
 				return error()
 
 
@@ -255,7 +267,14 @@ def editar(id_cancion):
 		Generos_Cancion_nueva = request.form.getlist("GENEROS")
 		Albumes_Cancion_nueva = request.form.getlist("ALBUMES")
 
+
 		if cancion_nueva!="" or cancion_seg_nueva!= "" or Autores_Cancion_nueva or Generos_Cancion_nueva or Albumes_Cancion_nueva:
+			try:
+				int(cancion_seg_nueva)
+			except ValueError:
+				error1='Rellene los campos necesarios y correctamente.'
+				return error()
+
 			if  cancion_nueva!="" and cancion_seg_nueva!= "" and Autores_Cancion_nueva and Generos_Cancion_nueva and Albumes_Cancion_nueva:
 				sql = "update Canciones set nombre = '%s', duracion = '%s' where id = %s" %(cancion_nueva, str(cancion_seg_nueva), id_cancion)
 				cur.execute(sql)
@@ -275,7 +294,7 @@ def editar(id_cancion):
 					sql = "insert into Canciones_Albumes (cancion_id, album_id) values ('%s','%s') " %(id_cancion, i)
 					cur.execute(sql)
 			else:
-				error1='Rellene los campos necesarios.'
+				error1='Rellene los campos necesarios y correctamente.'
 				return error()
 
 
